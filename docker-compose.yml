@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  codenewspaper-network:
+    name: codenewspaper-network
+    external: true
+
+services:
+  php:
+    container_name: codenewspaper-php
+    env_file:
+      - .env
+    networks:
+      - codenewspaper-network
+    restart: unless-stopped
+
+  caddy:
+    container_name: codenewspaper-caddy
+    depends_on:
+      - php
+    ports:
+      - "8950:80"
+    networks:
+      - codenewspaper-network
+    restart: unless-stopped

@@ -1,0 +1,38 @@
+version: '3.7'
+
+networks:
+  codenewspaper-network:
+    name: codenewspaper-network
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: codenewspaper-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: codenewspaperdb
+      MYSQL_USER: codenewspaper
+      MYSQL_PASSWORD: codenewspaper
+    volumes:
+      - /opt/docker/codenewspaperdb/mysql:/var/lib/mysql:delegated
+    networks:
+      - codenewspaper-network
+    ports:
+      - "8952:3306"
+    restart: unless-stopped
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: codenewspaper-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: codenewspaper
+      PMA_PASSWORD: codenewspaper
+      PMA_ABSOLUTE_URI: http://localhost:8080/
+    ports:
+      - "8090:80"
+    networks:
+      - codenewspaper-network
+    depends_on:
+      - mysql
